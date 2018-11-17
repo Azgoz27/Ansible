@@ -1,0 +1,5 @@
+---
+haproxy_port: 8080
+haproxy_servers:
+  - 192.168.1.121
+  - 192.168.1.161

@@ -1,0 +1,14 @@
+---
+- name: upgrade packages
+  apt: upgrade=safe
+
+
+- name: install packages
+  apt:
+    name: " {{ item }}"
+    state: present
+    update_cache: yes
+    with_items:
+  with_items:
+  - git-core
+  - ufw

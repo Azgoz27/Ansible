@@ -1,0 +1,30 @@
+---
+- name: check if sudo group is present
+  group:
+    name: sudo
+    state: present
+
+
+- name: check if sudo group has privileges
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: "^%sudo"
+    line: "%sudo ALL=(ALL:ALL) ALL"
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: create a default user
+  user:
+    name: "{{ username }}"
+    group: sudo
+    password: "{{ password }}"
+    shell: /bin/bash
+    update_password: always
+    state: present
+
+- name: add authorized key
+  authorized_key:
+    user: "{{ username }}"
+    key: "{{ lookup('file', public_key) }}"
+
+    

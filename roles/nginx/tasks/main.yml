@@ -1,0 +1,12 @@
+---
+- name: Make sure NGINX is up to date
+  apt: 
+    name: nginx
+    state: latest
+
+
+- name: Start NGINX
+  service:
+    name: nginx
+    state: started
+
