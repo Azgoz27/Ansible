@@ -1,0 +1,39 @@
+---
+- name: Install OpenSSL
+  package:
+    name: openssl
+    state: latest
+
+
+- name: Check for requirements
+  package:
+    name: python-openssl
+    state: latest
+
+
+- name: Create directory for local self-signed certificate
+  file:
+    path: /etc/ssl/csr/
+    state: directory
+  mode: 0755
+
+- name: Generate an OpenSSL private key
+  openssl_privatekey:
+    path: /etc/ssl/private/ansible.com.pem
+
+
+- name: Generate an OpenSSL CSR
+  openssl_csr:
+    path: /etc/ssl/csr/www.ansible.com.csr
+    privatekey_path: /etc/ssl/private/ansible.com.pem
+    common_name: www.ansible.com
+
+
+- name: Generate a Self Signed OpenSSL certificate
+  openssl_certificate:
+    path: /etc/ssl/certs/nginx-selfsigned.crt
+    privatekey_path: /etc/ssl/private/ansible.com.pem
+    csr_path: /etc/ssl/csr/www.ansible.com.csr
+    provider: selfsigned
+
+  

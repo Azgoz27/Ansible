@@ -1,12 +1,24 @@
 ---
+
+- name: Check if Firewall is present
+  apt:
+    name: ufw
+    state: present
+    force: yes
+    update_cache: yes 
+
+
 - name: Enable Firewall
   ufw: state=enabled policy=deny
+
 
 - name: Allow HTTP
   ufw: rule=allow port=80 proto=tcp
 
+
 - name: Allow HTTPS
   ufw: rule=allow port=443 proto=tcp
+
 
 - name: Allow SSH
   ufw: rule=allow port=22 proto=tcp

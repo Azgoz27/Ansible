@@ -1,30 +1,59 @@
 ---
-- name: check if sudo group is present
+- name: Check if sudo group is present
   group:
     name: sudo
     state: present
 
 
-- name: check if sudo group has privileges
+- name: Check if sudo group has privileges
   lineinfile:
     dest: /etc/sudoers
     state: present
     regexp: "^%sudo"
-    line: "%sudo ALL=(ALL:ALL) ALL"
+    line: "%sudo ALL=(ALL:ALL) NOPASSWD: ALL"
     validate: "/usr/sbin/visudo -cf %s"
 
-- name: create a default user
+
+- name: Create a passwordless sudo user
   user:
-    name: "{{ username }}"
+    name: sudo-user   
     group: sudo
-    password: "{{ password }}"
+    createhome: yes
+    password: sudo-password
     shell: /bin/bash
     update_password: always
     state: present
+    generate_ssh_key: yes
+    ssh_key_file: .ssh/id_rsa
 
-- name: add authorized key
-  authorized_key:
-    user: "{{ username }}"
-    key: "{{ lookup('file', public_key) }}"
+
+- name: Adding sudo-user to SSH allow list
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: 'AllowUsers sudo-user root' 
 
     
+- name: Create a dedicated NGINX user
+  user:
+    name: nginx-user
+    group: www-data
+    createhome: yes
+    password: nginx-password
+    shell: /bin/bash
+    update_password: always
+    state: present
+    generate_ssh_key: yes
+    ssh_key_file: .ssh/id_rsa
+    
+
+- name: Removing NGINX user from the SSH allow list
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: 'DenyUsers nginx-user'
+
+
+- name: Reload sshd configuration file
+  service:
+    name: sshd
+    state: restarted
+

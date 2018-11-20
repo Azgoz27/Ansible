@@ -1,5 +1,5 @@
 ---
-- name: Make sure NGINX is up to date
+- name: Checking for NGINX
   apt: 
     name: nginx
     state: latest
@@ -10,3 +10,42 @@
     name: nginx
     state: started
 
+
+- name: Loading SSL for NGINX
+  copy:
+    src: ./self-signed.conf 
+    dest: /etc/nginx/snippets/self-signed.conf
+    owner: root
+    group: root
+    mode: 0644
+ 
+
+- name: Configuring strong encription settings
+  copy:
+    src: ./ssl-params.conf
+    dest: /etc/nginx/snippets/ssl-params.conf
+    owner: root
+    group: root
+    mode: 0644
+ 
+
+- name: Loading NGINX configuration file
+  copy:
+    src: ./default
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: 0644
+    
+
+- name: Restarting NGINX
+  service:
+    name: nginx
+    state: restarted
+    
+
+- name: Allow NGINX full
+  ufw:
+    rule: allow
+    name: Nginx Full
+    state: enabled

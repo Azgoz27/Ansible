@@ -2,14 +2,16 @@
 - hosts: production
   user: root
   vars:
-    username: razi
-    password: $6$C/HeaKmu$rXKCfniWwoL5YAVxFbQaBFUhDs6kSdnvofJLJOEPSTFVsd/GjxepxoqpshREwqlsCfU3IegHiKVVRK6e9y7W5.    
+    username: root
+    #password:    
     public_key: ~/.ssh/id_rsa.pub
   roles:
-#   - common
+   - common
    - ufw
-#   - user
+   - ssl
    - nginx
-   - haproxy
-   - mariadb
+   - user
+
+#   - haproxy
+#   - mariadb
 
